@@ -4,17 +4,40 @@ using Xunit;
 
 namespace PrintDateKata
 {
+    static class ObjectMother
+    {
+        public static DateTime GetAfternoon()
+        {
+            return new DateTime(2017, 1, 1, 12, 0, 0);
+        }
+
+        public static DateTime GetMorning()
+        {
+            return new DateTime(2017, 1, 1, 11, 59, 59);
+        }
+    }
     public class GreeterShould
     {
         [Fact]
-        public void greet()
+        public void greet_morning()
         {
             var writer = new SpyWriter();
-            var now = DateTime.Now;
+            var now = ObjectMother.GetMorning();
             var dateTimeRetriever = new StubDateTimeRetriever(now);
             var greeter = new Greeter(writer, dateTimeRetriever);
             greeter.Greet();
-            writer.Output.Should().StartWith("Hi, " + now);
+            writer.Output.Should().StartWith("Hi, " + now + " morning");
+        }
+
+        [Fact]
+        public void greet_afternoon()
+        {
+            var writer = new SpyWriter();
+            var now = ObjectMother.GetAfternoon();
+            var dateTimeRetriever = new StubDateTimeRetriever(now);
+            var greeter = new Greeter(writer, dateTimeRetriever);
+            greeter.Greet();
+            writer.Output.Should().StartWith("Hi, " + now + " afternoon");
         }
     }
 
@@ -31,7 +54,13 @@ namespace PrintDateKata
 
         public void Greet()
         {
-            _writer.Write("Hi, " + _dateTimeRetriever.GetCurrent());
+            var current = _dateTimeRetriever.GetCurrent();
+            var greetingTime = "morning";
+            if (current.Hour >= 12)
+            {
+                greetingTime = "afternoon";
+            }
+            _writer.Write($"Hi, {current} {greetingTime}");
         }
     }
 

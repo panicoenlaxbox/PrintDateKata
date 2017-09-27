@@ -10,30 +10,34 @@ namespace PrintDateKata
         [Fact]
         public void greet()
         {
-            var writer = new Writer();
-            var greeter = new Greeter(writer);
-            var message = DateTime.Now.ToString();
-            greeter.Greet(message);
-            writer.Output.Should().Be(message);
+            var writer = new SpyWriter();
+            Greeter greeter = new Greeter(writer);
+            greeter.Greet();
+            writer.Output.Should().StartWith("Hi, ");
         }
     }
 
     public class Greeter
     {
-        private readonly Writer _writer;
+        private readonly IWriter _writer;
 
-        public Greeter(Writer writer)
+        public Greeter(IWriter writer)
         {
             _writer = writer;
         }
 
-        public void Greet(string message)
+        public void Greet()
         {
-            _writer.Write(message);
+            _writer.Write("Hi, " + DateTime.Now);
         }
     }
 
-    public class Writer
+    public interface IWriter
+    {
+        void Write(string message);
+    }
+
+    public class SpyWriter : IWriter
     {
         public void Write(string message)
         {

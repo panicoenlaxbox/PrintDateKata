@@ -19,9 +19,9 @@ namespace PrintDateKata
 
     public class Greeter
     {
-        private readonly IWriter _writer;
+        private readonly Writer _writer;
 
-        public Greeter(IWriter writer)
+        public Greeter(Writer writer)
         {
             _writer = writer;
         }
@@ -32,14 +32,17 @@ namespace PrintDateKata
         }
     }
 
-    public interface IWriter
+    public class Writer
     {
-        void Write(string message);
+        public virtual void Write(string message)
+        {
+            Console.WriteLine(message);
+        }
     }
 
-    public class SpyWriter : IWriter
+    public class SpyWriter : Writer
     {
-        public void Write(string message)
+        public override void Write(string message)
         {
             Output = message;
         }
